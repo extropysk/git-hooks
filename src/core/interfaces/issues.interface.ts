@@ -14,7 +14,13 @@ export type MySchema = Issue[]
 
 export interface IssueWrapper {
   action: string
+  assignee?: SimpleUser1 | null
+  enterprise?: unknown
+  installation?: unknown
   issue: Issue
+  organization?: Organization
+  repository: Repository
+  sender: SimpleUser
 }
 
 /**

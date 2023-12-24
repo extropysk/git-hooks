@@ -1,8 +1,9 @@
 import { Body, Controller, Headers, Post, UseGuards } from '@nestjs/common'
 import { CommandBus } from '@nestjs/cqrs'
 import { ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger'
+import { IssuesCommand } from 'src/clockify/commands/issues.command'
+import { PingCommand } from 'src/clockify/commands/ping.command'
 import { WebhookGuard } from 'src/core/guards/webhook.guard'
-import { IssueWrapper } from 'src/core/interfaces/issue.interface'
 
 class Response {}
 
@@ -16,22 +17,14 @@ export class ClockifyController {
   @ApiOperation({ summary: 'Handle event' })
   @ApiOkResponse({ type: Response })
   @Post()
-  createOrder(@Body() body: unknown, @Headers('x-github-event') event) {
-    console.log(event)
-    console.log(body)
-
+  createOrder(@Body() body, @Headers('x-github-event') event) {
     switch (event) {
-      case 'ping':
-        console.log(body)
-        break
       case 'issues':
-        const issue = body as IssueWrapper
-        console.log(issue)
-        break
+        return this.commandBus.execute(new IssuesCommand(body))
+      case 'ping':
+        return this.commandBus.execute(new PingCommand(body))
       default:
-        break
+        return {}
     }
-
-    return {}
   }
 }

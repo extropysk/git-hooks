@@ -1,4 +1,4 @@
-import { Organization, Repository, SimpleUser } from 'src/core/interfaces/issue.interface'
+import { Organization, Repository, SimpleUser } from 'src/core/interfaces/issues.interface'
 
 export interface Ping {
   hook?: Hook
