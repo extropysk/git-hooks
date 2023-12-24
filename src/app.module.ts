@@ -4,7 +4,7 @@ import { JwtModule } from '@nestjs/jwt'
 import { LoggerModule } from 'nestjs-pino'
 import loki from 'pino-loki'
 import pretty from 'pino-pretty'
-import { UsersModule } from 'src/users/users.module'
+import { ClockifyModule } from 'src/clockify/clockify.module'
 
 const buildStream = (config: ConfigService) => {
   const host = config.get<string>('LOKI_HOST')
@@ -17,7 +17,7 @@ const buildStream = (config: ConfigService) => {
 
       host: process.env.LOKI_HOST,
       labels: {
-        app: config.get<string>('APP_NAME', 'api'),
+        app: config.get<string>('APP_NAME', 'git-hooks'),
         version: config.get<string>('VERSION'),
         env: config.get<string>('NODE_ENV', 'development'),
       },
@@ -35,7 +35,7 @@ const buildStream = (config: ConfigService) => {
 
 @Module({
   imports: [
-    UsersModule,
+    ClockifyModule,
     ConfigModule.forRoot({ isGlobal: true }),
     JwtModule.register({ global: true }),
     LoggerModule.forRootAsync({

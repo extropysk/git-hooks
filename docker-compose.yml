@@ -1,8 +1,8 @@
 version: '3.8'
 
 services:
-  api:
-    image: api
+  git-hooks:
+    image: git-hooks
     build:
       context: .
       dockerfile: ./Dockerfile

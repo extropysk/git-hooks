@@ -6,7 +6,7 @@ import { Logger } from 'nestjs-pino'
 import { AppModule } from './app.module'
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { bufferLogs: true })
+  const app = await NestFactory.create(AppModule, { bufferLogs: true, rawBody: true })
   const configService = app.get<ConfigService>(ConfigService)
 
   app.enableCors()
@@ -16,7 +16,6 @@ async function bootstrap() {
   const config = new DocumentBuilder()
     .setTitle(configService.get<string>('APP_NAME'))
     .setVersion(configService.get<string>('APP_VERSION')?.substring(0, 7))
-    .addBearerAuth()
     .build()
 
   const document = SwaggerModule.createDocument(app, config)
