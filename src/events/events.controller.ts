@@ -2,9 +2,10 @@ import { Body, Controller, Headers, Post, UseGuards } from '@nestjs/common'
 import { CommandBus } from '@nestjs/cqrs'
 import { ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger'
 import { WebhookGuard } from 'src/core/guards/webhook.guard'
+import { CreateIssueCommand } from 'src/events/commands/create-issue.command'
 import { NullCommand } from 'src/events/commands/null.command'
-import { OpenIssueCommand } from 'src/events/commands/open-issue.command'
 import { PingCommand } from 'src/events/commands/ping.command'
+import { EditIssueCommand } from 'src/events/commands/update-issue.command'
 import { IssueWrapper } from 'src/events/interfaces/issues.interface'
 import { Ping } from 'src/events/interfaces/ping.interface'
 
@@ -20,8 +21,11 @@ export class EventsController {
   getIssuesCommand(body: IssueWrapper) {
     switch (body.action) {
       case 'opened':
-        return new OpenIssueCommand(body.issue)
+        return new CreateIssueCommand(body.issue)
+      case 'edited':
+        return new EditIssueCommand(body.issue)
       default:
+        console.log(body)
         return new NullCommand()
     }
   }
