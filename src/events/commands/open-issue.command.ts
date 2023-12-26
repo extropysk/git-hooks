@@ -1,5 +1,5 @@
 import { IssueWrapper } from 'src/events/interfaces/issues.interface'
 
-export class IssuesCommand {
+export class OpenIssueCommand {
   constructor(public readonly data: IssueWrapper) {}
 }
