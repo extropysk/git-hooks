@@ -15,8 +15,19 @@ export class OpenIssueHandler implements ICommandHandler<CreateIssueCommand> {
   ) {}
 
   async execute({ data }: CreateIssueCommand) {
-    const res = await this.db.collection<Issue>('issues').insertOne(data)
-    this.eventBus.publish(new IssueCreatedEvent(data))
+    const res = await this.db.collection<Issue>('issues').updateOne(
+      {
+        id: data.id,
+      },
+      {
+        $setOnInsert: data,
+      },
+      { upsert: true }
+    )
+
+    if (res.upsertedCount) {
+      this.eventBus.publish(new IssueCreatedEvent(data))
+    }
     return res
   }
 }
