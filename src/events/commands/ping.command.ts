@@ -1,4 +1,4 @@
-import { Ping } from 'src/core/interfaces/ping.interface'
+import { Ping } from 'src/events/interfaces/ping.interface'
 
 export class PingCommand {
   constructor(public readonly data: Ping) {}

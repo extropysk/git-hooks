@@ -1,4 +1,4 @@
-import { IssueWrapper } from 'src/core/interfaces/issues.interface'
+import { IssueWrapper } from 'src/events/interfaces/issues.interface'
 
 export class IssuesCommand {
   constructor(public readonly data: IssueWrapper) {}
