@@ -17,7 +17,7 @@ export class IssuesSaga {
       ofType(IssueOpenedEvent),
       map(({ data }) => {
         const task: ClockifyTask = {
-          name: `${data.issue.id}/${data.issue.title}`,
+          name: `${data.issue.title} #${data.issue.number}`,
         }
         return new CreateClockifyTaskCommand(WORKSPACE_ID, PROJECT_ID, task)
       })
