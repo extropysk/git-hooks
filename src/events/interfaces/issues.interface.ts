@@ -102,6 +102,9 @@ export interface Issue {
   author_association: AuthorAssociation
   reactions?: ReactionRollup
   [k: string]: unknown
+  clockify?: {
+    id: string
+  }
 }
 /**
  * A GitHub user.

@@ -20,7 +20,7 @@ export class EventsController {
   getIssuesCommand(body: IssueWrapper) {
     switch (body.action) {
       case 'opened':
-        return new OpenIssueCommand(body)
+        return new OpenIssueCommand(body.issue)
       default:
         return new NullCommand()
     }

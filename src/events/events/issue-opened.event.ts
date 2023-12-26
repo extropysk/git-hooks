@@ -1,5 +1,5 @@
-import { IssueWrapper } from 'src/events/interfaces/issues.interface'
+import { Issue } from 'src/events/interfaces/issues.interface'
 
 export class IssueOpenedEvent {
-  constructor(public readonly data: IssueWrapper) {}
+  constructor(public readonly data: Issue) {}
 }

@@ -3,7 +3,6 @@ import { ICommand, Saga, ofType } from '@nestjs/cqrs'
 import { Observable } from 'rxjs'
 import { map } from 'rxjs/operators'
 import { CreateClockifyTaskCommand } from 'src/clockify/commands/create-task.command'
-import { ClockifyTask } from 'src/clockify/interfaces/task.interface'
 import { IssueOpenedEvent } from 'src/events/events/issue-opened.event'
 
 const WORKSPACE_ID = '61f6d549fbebf7179a8cc720'
@@ -16,10 +15,7 @@ export class IssuesSaga {
     return events$.pipe(
       ofType(IssueOpenedEvent),
       map(({ data }) => {
-        const task: ClockifyTask = {
-          name: `${data.issue.title} #${data.issue.number}`,
-        }
-        return new CreateClockifyTaskCommand(WORKSPACE_ID, PROJECT_ID, task)
+        return new CreateClockifyTaskCommand(WORKSPACE_ID, PROJECT_ID, data)
       })
     )
   }
