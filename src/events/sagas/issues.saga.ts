@@ -11,7 +11,7 @@ const PROJECT_ID = '633553435eca38568726b55a'
 @Injectable()
 export class IssuesSaga {
   @Saga()
-  issueOpened = (events$: Observable<any>): Observable<ICommand> => {
+  issueCreated = (events$: Observable<any>): Observable<ICommand> => {
     return events$.pipe(
       ofType(IssueCreatedEvent),
       map(({ data }) => new CreateClockifyTaskCommand(WORKSPACE_ID, PROJECT_ID, data))
