@@ -2,8 +2,8 @@ import { Injectable, Logger } from '@nestjs/common'
 import { ICommand, Saga, ofType } from '@nestjs/cqrs'
 import { Observable } from 'rxjs'
 import { map } from 'rxjs/operators'
-import { NullCommand } from 'src/clockify/commands/null.command'
-import { IssueOpenedEvent } from 'src/clockify/events/issue-opened.event'
+import { NullCommand } from 'src/events/commands/null.command'
+import { IssueOpenedEvent } from 'src/events/events/issue-opened.event'
 
 @Injectable()
 export class IssuesSaga {

@@ -1,18 +1,18 @@
 import { Body, Controller, Headers, Post, UseGuards } from '@nestjs/common'
 import { CommandBus } from '@nestjs/cqrs'
 import { ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger'
-import { IssuesCommand } from 'src/clockify/commands/issues.command'
-import { NullCommand } from 'src/clockify/commands/null.command'
-import { PingCommand } from 'src/clockify/commands/ping.command'
 import { WebhookGuard } from 'src/core/guards/webhook.guard'
+import { IssuesCommand } from 'src/events/commands/issues.command'
+import { NullCommand } from 'src/events/commands/null.command'
+import { PingCommand } from 'src/events/commands/ping.command'
 
 class Response {}
 
-@ApiTags('clockify')
-@Controller('clockify')
+@ApiTags('events')
+@Controller('events')
 @UseGuards(WebhookGuard)
 @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-export class ClockifyController {
+export class EventsController {
   constructor(private readonly commandBus: CommandBus) {}
 
   getCommand(body: any, event: string) {

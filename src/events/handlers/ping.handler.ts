@@ -1,6 +1,6 @@
 import { Logger } from '@nestjs/common'
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
-import { PingCommand } from 'src/clockify/commands/ping.command'
+import { PingCommand } from 'src/events/commands/ping.command'
 
 @CommandHandler(PingCommand)
 export class PingHandler implements ICommandHandler<PingCommand> {

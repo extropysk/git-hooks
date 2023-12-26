@@ -4,7 +4,7 @@ import { JwtModule } from '@nestjs/jwt'
 import { LoggerModule } from 'nestjs-pino'
 import loki from 'pino-loki'
 import pretty from 'pino-pretty'
-import { ClockifyModule } from 'src/clockify/clockify.module'
+import { EventsModule } from 'src/events/events.module'
 
 const buildStream = (config: ConfigService) => {
   const host = config.get<string>('LOKI_HOST')
@@ -35,7 +35,7 @@ const buildStream = (config: ConfigService) => {
 
 @Module({
   imports: [
-    ClockifyModule,
+    EventsModule,
     ConfigModule.forRoot({ isGlobal: true }),
     JwtModule.register({ global: true }),
     LoggerModule.forRootAsync({
