@@ -37,6 +37,9 @@ export class CreateClockifyTaskHandler implements ICommandHandler<CreateClockify
 
     return await this.db
       .collection<Issue>('issues')
-      .updateOne({ id: issue.id }, { $set: { clockify: { id: task.id } } })
+      .updateOne(
+        { id: issue.id },
+        { $set: { clockify: { id: task.id, updated_at: new Date(issue.updated_at) } } }
+      )
   }
 }
