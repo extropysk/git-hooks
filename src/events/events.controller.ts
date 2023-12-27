@@ -25,7 +25,6 @@ export class EventsController {
       case 'edited':
         return new EditIssueCommand(body.issue)
       default:
-        console.log(body)
         return new NullCommand()
     }
   }

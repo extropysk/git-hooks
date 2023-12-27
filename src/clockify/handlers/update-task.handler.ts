@@ -19,16 +19,12 @@ export class UpdateClockifyTaskHandler implements ICommandHandler<UpdateClockify
     private db: Db
   ) {}
 
-  async execute({ workspaceId, projectId, data: issue }: UpdateClockifyTaskCommand) {
-    const data: ClockifyTask = {
-      name: `${issue.title} #${issue.number}`,
-    }
-
+  async execute({ workspaceId, projectId, issue, task }: UpdateClockifyTaskCommand) {
     await firstValueFrom(
       this.httpService
         .put<ClockifyTask>(
           `/v1/workspaces/${workspaceId}/projects/${projectId}/tasks/${issue.clockify?.id}`,
-          data
+          task
         )
         .pipe(
           catchError((error: AxiosError) => {

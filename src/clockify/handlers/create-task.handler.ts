@@ -19,14 +19,12 @@ export class CreateClockifyTaskHandler implements ICommandHandler<CreateClockify
     private db: Db
   ) {}
 
-  async execute({ workspaceId, projectId, data: issue }: CreateClockifyTaskCommand) {
-    const data: ClockifyTask = {
-      name: `${issue.title} #${issue.number}`,
-    }
-
-    const { data: task } = await firstValueFrom(
+  async execute({ workspaceId, projectId, issue, task }: CreateClockifyTaskCommand) {
+    const {
+      data: { id },
+    } = await firstValueFrom(
       this.httpService
-        .post<ClockifyTask>(`/v1/workspaces/${workspaceId}/projects/${projectId}/tasks`, data)
+        .post<ClockifyTask>(`/v1/workspaces/${workspaceId}/projects/${projectId}/tasks`, task)
         .pipe(
           catchError((error: AxiosError) => {
             this.logger.error(error.response.data)
@@ -37,6 +35,6 @@ export class CreateClockifyTaskHandler implements ICommandHandler<CreateClockify
 
     return await this.db
       .collection<Issue>('issues')
-      .updateOne({ _id: issue._id }, { $set: { clockify: { id: task.id, is_synced: true } } })
+      .updateOne({ _id: issue._id }, { $set: { clockify: { id, is_synced: true } } })
   }
 }
