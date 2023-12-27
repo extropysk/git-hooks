@@ -24,7 +24,7 @@ export class UpdateClockifyTaskHandler implements ICommandHandler<UpdateClockify
       name: `${issue.title} #${issue.number}`,
     }
 
-    const { data: task } = await firstValueFrom(
+    await firstValueFrom(
       this.httpService
         .put<ClockifyTask>(
           `/v1/workspaces/${workspaceId}/projects/${projectId}/tasks/${issue.clockify?.id}`,
