@@ -23,7 +23,8 @@ export class EditIssueHandler implements ICommandHandler<EditIssueCommand> {
           body: data.body,
           'clockify.is_synced': false,
         },
-      }
+      },
+      { returnDocument: 'after' }
     )
     this.eventBus.publish(new IssueEditedEvent(res))
     return res
