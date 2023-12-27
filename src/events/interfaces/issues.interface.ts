@@ -1,3 +1,5 @@
+import { ObjectId } from 'mongodb'
+
 /**
  * How the author is associated with the repository.
  */
@@ -10,28 +12,22 @@ export type AuthorAssociation =
   | 'MEMBER'
   | 'NONE'
   | 'OWNER'
-export type MySchema = Issue[]
 
 export interface IssueWrapper {
   action: string
   assignee?: SimpleUser1 | null
   enterprise?: unknown
   installation?: unknown
-  issue: Issue
+  issue: BaseIssue
   organization?: Organization
   repository: Repository
   sender: SimpleUser
 }
 
-interface Sync {
-  id: string
-  is_synced: boolean
-}
-
 /**
  * Issues are a great way to keep track of tasks, enhancements, and bugs for your projects.
  */
-export interface Issue {
+export interface BaseIssue {
   id: number
   node_id: string
   /**
@@ -106,7 +102,17 @@ export interface Issue {
   performed_via_github_app?: null | GitHubApp
   author_association: AuthorAssociation
   reactions?: ReactionRollup
+}
+
+interface Sync {
+  id: string
+  is_synced: boolean
+}
+
+export interface Issue extends BaseIssue {
+  _id: ObjectId
   clockify?: Sync
+  is_deleted?: boolean
 }
 /**
  * A GitHub user.

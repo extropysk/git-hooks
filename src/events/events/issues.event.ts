@@ -1,8 +1,7 @@
-import { WithId } from 'src/db/interfaces/base.interface'
 import { Issue } from 'src/events/interfaces/issues.interface'
 
 class IssueEvent {
-  constructor(public readonly data: WithId<Issue>) {}
+  constructor(public readonly data: Issue) {}
 }
 
 export class IssueOpenedEvent extends IssueEvent {}

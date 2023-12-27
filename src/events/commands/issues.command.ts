@@ -1,7 +1,7 @@
-import { Issue } from 'src/events/interfaces/issues.interface'
+import { BaseIssue } from 'src/events/interfaces/issues.interface'
 
 class IssueCommand {
-  constructor(public readonly data: Issue) {}
+  constructor(public readonly data: BaseIssue) {}
 }
 
 export class CloseIssueCommand extends IssueCommand {}

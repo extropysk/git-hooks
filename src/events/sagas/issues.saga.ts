@@ -7,7 +7,6 @@ import {
   DeleteClockifyTaskCommand,
   UpdateClockifyTaskCommand,
 } from 'src/clockify/commands/tasks.command'
-import { WithId } from 'src/db/interfaces/base.interface'
 import { NullCommand } from 'src/events/commands/null.command'
 import {
   IssueClosedEvent,
@@ -31,7 +30,7 @@ export class IssuesSaga {
     )
   }
 
-  getUpdateOrCreateClockifyTaskCommand(data: WithId<Issue>) {
+  getUpdateOrCreateClockifyTaskCommand(data: Issue) {
     return data.clockify?.id
       ? new UpdateClockifyTaskCommand(WORKSPACE_ID, PROJECT_ID, data)
       : new CreateClockifyTaskCommand(WORKSPACE_ID, PROJECT_ID, data)
