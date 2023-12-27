@@ -6,12 +6,14 @@ import {
   CreateClockifyTaskCommand,
   UpdateClockifyTaskCommand,
 } from 'src/clockify/commands/tasks.command'
+import { WithId } from 'src/db/interfaces/base.interface'
 import {
   IssueClosedEvent,
   IssueEditedEvent,
   IssueOpenedEvent,
   IssueReopenedEvent,
 } from 'src/events/events/issues.event'
+import { Issue } from 'src/events/interfaces/issues.interface'
 
 const WORKSPACE_ID = '61f6d549fbebf7179a8cc720'
 const PROJECT_ID = '633553435eca38568726b55a'
@@ -26,15 +28,17 @@ export class IssuesSaga {
     )
   }
 
+  getUpdateOrCreateClockifyTaskCommand(data: WithId<Issue>) {
+    return data.clockify?.id
+      ? new UpdateClockifyTaskCommand(WORKSPACE_ID, PROJECT_ID, data)
+      : new CreateClockifyTaskCommand(WORKSPACE_ID, PROJECT_ID, data)
+  }
+
   @Saga()
   issueEdited = (events$: Observable<any>): Observable<ICommand> => {
     return events$.pipe(
       ofType(IssueEditedEvent),
-      map(({ data }) =>
-        data.clockify?.id
-          ? new UpdateClockifyTaskCommand(WORKSPACE_ID, PROJECT_ID, data)
-          : new CreateClockifyTaskCommand(WORKSPACE_ID, PROJECT_ID, data)
-      )
+      map(({ data }) => this.getUpdateOrCreateClockifyTaskCommand(data))
     )
   }
 
@@ -42,11 +46,7 @@ export class IssuesSaga {
   issueClosed = (events$: Observable<any>): Observable<ICommand> => {
     return events$.pipe(
       ofType(IssueClosedEvent),
-      map(({ data }) =>
-        data.clockify?.id
-          ? new UpdateClockifyTaskCommand(WORKSPACE_ID, PROJECT_ID, data)
-          : new CreateClockifyTaskCommand(WORKSPACE_ID, PROJECT_ID, data)
-      )
+      map(({ data }) => this.getUpdateOrCreateClockifyTaskCommand(data))
     )
   }
 
@@ -54,11 +54,7 @@ export class IssuesSaga {
   issueReopened = (events$: Observable<any>): Observable<ICommand> => {
     return events$.pipe(
       ofType(IssueReopenedEvent),
-      map(({ data }) =>
-        data.clockify?.id
-          ? new UpdateClockifyTaskCommand(WORKSPACE_ID, PROJECT_ID, data)
-          : new CreateClockifyTaskCommand(WORKSPACE_ID, PROJECT_ID, data)
-      )
+      map(({ data }) => this.getUpdateOrCreateClockifyTaskCommand(data))
     )
   }
 }
