@@ -14,7 +14,7 @@ export class EditIssueHandler implements ICommandHandler<EditIssueCommand> {
     private db: Db
   ) {}
 
-  async execute({ data }: EditIssueCommand) {
+  async execute({ data, query }: EditIssueCommand) {
     const res = await this.db.collection<Issue>('issues').findOneAndUpdate(
       { id: data.id },
       {
@@ -26,7 +26,7 @@ export class EditIssueHandler implements ICommandHandler<EditIssueCommand> {
       },
       { returnDocument: 'after' }
     )
-    this.eventBus.publish(new IssueEditedEvent(res))
+    this.eventBus.publish(new IssueEditedEvent(res, query))
     return res
   }
 }

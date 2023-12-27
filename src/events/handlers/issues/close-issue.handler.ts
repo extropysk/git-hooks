@@ -14,7 +14,7 @@ export class CloseIssueHandler implements ICommandHandler<CloseIssueCommand> {
     private db: Db
   ) {}
 
-  async execute({ data }: CloseIssueCommand) {
+  async execute({ data, query }: CloseIssueCommand) {
     const res = await this.db.collection<Issue>('issues').findOneAndUpdate(
       { id: data.id },
       {
@@ -26,7 +26,7 @@ export class CloseIssueHandler implements ICommandHandler<CloseIssueCommand> {
       },
       { returnDocument: 'after' }
     )
-    this.eventBus.publish(new IssueClosedEvent(res))
+    this.eventBus.publish(new IssueClosedEvent(res, query))
     return res
   }
 }

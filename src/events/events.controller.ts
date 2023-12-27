@@ -1,4 +1,4 @@
-import { Body, Controller, Headers, Post, UseGuards } from '@nestjs/common'
+import { Body, Controller, Headers, Post, Query, UseGuards } from '@nestjs/common'
 import { CommandBus } from '@nestjs/cqrs'
 import { ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger'
 import { WebhookGuard } from 'src/core/guards/webhook.guard'
@@ -11,6 +11,7 @@ import {
 } from 'src/events/commands/issues.command'
 import { NullCommand } from 'src/events/commands/null.command'
 import { PingCommand } from 'src/events/commands/ping.command'
+import { EventDto } from 'src/events/dto/event.dto'
 import { IssueWrapper } from 'src/events/interfaces/issues.interface'
 import { Ping } from 'src/events/interfaces/ping.interface'
 
@@ -23,30 +24,30 @@ class Response {}
 export class EventsController {
   constructor(private readonly commandBus: CommandBus) {}
 
-  getIssuesCommand(body: IssueWrapper) {
+  getIssuesCommand(body: IssueWrapper, query: EventDto) {
     switch (body.action) {
       case 'opened':
-        return new OpenIssueCommand(body.issue)
+        return new OpenIssueCommand(body.issue, query)
       case 'edited':
-        return new EditIssueCommand(body.issue)
+        return new EditIssueCommand(body.issue, query)
       case 'closed':
-        return new CloseIssueCommand(body.issue)
+        return new CloseIssueCommand(body.issue, query)
       case 'reopened':
-        return new ReopenIssueCommand(body.issue)
+        return new ReopenIssueCommand(body.issue, query)
       case 'deleted':
-        return new DeleteIssueCommand(body.issue)
+        return new DeleteIssueCommand(body.issue, query)
       default:
         console.log(body)
         return new NullCommand()
     }
   }
 
-  getCommand(body: unknown, event: string) {
+  getCommand(body: unknown, event: string, query: EventDto) {
     switch (event) {
       case 'issues':
-        return this.getIssuesCommand(body as IssueWrapper)
+        return this.getIssuesCommand(body as IssueWrapper, query)
       case 'ping':
-        return new PingCommand(body as Ping)
+        return new PingCommand(body as Ping, query)
       default:
         return new NullCommand()
     }
@@ -55,8 +56,8 @@ export class EventsController {
   @ApiOperation({ summary: 'Handle event' })
   @ApiOkResponse({ type: Response })
   @Post()
-  post(@Body() body, @Headers('x-github-event') event) {
-    const command = this.getCommand(body, event)
+  post(@Body() body, @Headers('x-github-event') event, @Query() query: EventDto) {
+    const command = this.getCommand(body, event, query)
     return this.commandBus.execute(command)
   }
 }

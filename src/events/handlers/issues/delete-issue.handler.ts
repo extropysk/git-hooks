@@ -14,7 +14,7 @@ export class DeleteIssueHandler implements ICommandHandler<DeleteIssueCommand> {
     private db: Db
   ) {}
 
-  async execute({ data }: DeleteIssueCommand) {
+  async execute({ data, query }: DeleteIssueCommand) {
     const res = await this.db.collection<Issue>('issues').findOneAndUpdate(
       { id: data.id },
       {
@@ -25,7 +25,7 @@ export class DeleteIssueHandler implements ICommandHandler<DeleteIssueCommand> {
       },
       { returnDocument: 'after' }
     )
-    this.eventBus.publish(new IssueDeletedEvent(res))
+    this.eventBus.publish(new IssueDeletedEvent(res, query))
     return res
   }
 }

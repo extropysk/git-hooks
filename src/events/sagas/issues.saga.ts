@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
 import { ICommand, Saga, ofType } from '@nestjs/cqrs'
 import { Observable } from 'rxjs'
 import { map } from 'rxjs/operators'
@@ -12,35 +13,41 @@ import {
   IssueClosedEvent,
   IssueDeletedEvent,
   IssueEditedEvent,
+  IssueEvent,
   IssueOpenedEvent,
   IssueReopenedEvent,
 } from 'src/events/events/issues.event'
-import { Issue } from 'src/events/interfaces/issues.interface'
-
-const WORKSPACE_ID = '61f6d549fbebf7179a8cc720'
-const PROJECT_ID = '633553435eca38568726b55a'
 
 @Injectable()
 export class IssuesSaga {
+  workspaceId: string
+
+  constructor(private configService: ConfigService) {
+    this.workspaceId = configService.get('CLOCKIFY_WORKSPACE_ID')
+  }
+
   @Saga()
   issueOpened = (events$: Observable<any>): Observable<ICommand> => {
     return events$.pipe(
       ofType(IssueOpenedEvent),
-      map(({ data }) => new CreateClockifyTaskCommand(WORKSPACE_ID, PROJECT_ID, data))
+      map(
+        ({ data, query }) =>
+          new CreateClockifyTaskCommand(this.workspaceId, query.clockifyProjectId, data)
+      )
     )
   }
 
-  getUpdateOrCreateClockifyTaskCommand(data: Issue) {
+  getUpdateOrCreateClockifyTaskCommand({ data, query }: IssueEvent) {
     return data.clockify?.id
-      ? new UpdateClockifyTaskCommand(WORKSPACE_ID, PROJECT_ID, data)
-      : new CreateClockifyTaskCommand(WORKSPACE_ID, PROJECT_ID, data)
+      ? new UpdateClockifyTaskCommand(this.workspaceId, query.clockifyProjectId, data)
+      : new CreateClockifyTaskCommand(this.workspaceId, query.clockifyProjectId, data)
   }
 
   @Saga()
   issueEdited = (events$: Observable<any>): Observable<ICommand> => {
     return events$.pipe(
       ofType(IssueEditedEvent),
-      map(({ data }) => this.getUpdateOrCreateClockifyTaskCommand(data))
+      map((event) => this.getUpdateOrCreateClockifyTaskCommand(event))
     )
   }
 
@@ -48,7 +55,7 @@ export class IssuesSaga {
   issueClosed = (events$: Observable<any>): Observable<ICommand> => {
     return events$.pipe(
       ofType(IssueClosedEvent),
-      map(({ data }) => this.getUpdateOrCreateClockifyTaskCommand(data))
+      map((event) => this.getUpdateOrCreateClockifyTaskCommand(event))
     )
   }
 
@@ -56,7 +63,7 @@ export class IssuesSaga {
   issueReopened = (events$: Observable<any>): Observable<ICommand> => {
     return events$.pipe(
       ofType(IssueReopenedEvent),
-      map(({ data }) => this.getUpdateOrCreateClockifyTaskCommand(data))
+      map((event) => this.getUpdateOrCreateClockifyTaskCommand(event))
     )
   }
 
@@ -64,9 +71,9 @@ export class IssuesSaga {
   issueDeleted = (events$: Observable<any>): Observable<ICommand> => {
     return events$.pipe(
       ofType(IssueDeletedEvent),
-      map(({ data }) =>
+      map(({ data, query }) =>
         data.clockify?.id
-          ? new DeleteClockifyTaskCommand(WORKSPACE_ID, PROJECT_ID, data)
+          ? new DeleteClockifyTaskCommand(this.workspaceId, query.clockifyProjectId, data)
           : new NullCommand()
       )
     )

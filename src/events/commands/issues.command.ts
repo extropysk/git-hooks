@@ -1,7 +1,8 @@
+import { EventDto } from 'src/events/dto/event.dto'
 import { BaseIssue } from 'src/events/interfaces/issues.interface'
 
 class IssueCommand {
-  constructor(public readonly data: BaseIssue) {}
+  constructor(public readonly data: BaseIssue, public readonly query: EventDto) {}
 }
 
 export class CloseIssueCommand extends IssueCommand {}

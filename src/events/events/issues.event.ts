@@ -1,7 +1,8 @@
+import { EventDto } from 'src/events/dto/event.dto'
 import { Issue } from 'src/events/interfaces/issues.interface'
 
-class IssueEvent {
-  constructor(public readonly data: Issue) {}
+export class IssueEvent {
+  constructor(public readonly data: Issue, public readonly query: EventDto) {}
 }
 
 export class IssueOpenedEvent extends IssueEvent {}

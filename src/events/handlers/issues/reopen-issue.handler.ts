@@ -14,7 +14,7 @@ export class ReopenIssueHandler implements ICommandHandler<ReopenIssueCommand> {
     private db: Db
   ) {}
 
-  async execute({ data }: ReopenIssueCommand) {
+  async execute({ data, query }: ReopenIssueCommand) {
     const res = await this.db.collection<Issue>('issues').findOneAndUpdate(
       { id: data.id },
       {
@@ -26,7 +26,7 @@ export class ReopenIssueHandler implements ICommandHandler<ReopenIssueCommand> {
       },
       { returnDocument: 'after' }
     )
-    this.eventBus.publish(new IssueReopenedEvent(res))
+    this.eventBus.publish(new IssueReopenedEvent(res, query))
     return res
   }
 }

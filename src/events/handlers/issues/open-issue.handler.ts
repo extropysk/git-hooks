@@ -14,7 +14,7 @@ export class OpenIssueHandler implements ICommandHandler<OpenIssueCommand> {
     private db: Db
   ) {}
 
-  async execute({ data }: OpenIssueCommand) {
+  async execute({ data, query }: OpenIssueCommand) {
     const res = await this.db.collection<Issue>('issues').updateOne(
       {
         id: data.id,
@@ -26,7 +26,7 @@ export class OpenIssueHandler implements ICommandHandler<OpenIssueCommand> {
     )
 
     if (res.upsertedCount) {
-      this.eventBus.publish(new IssueOpenedEvent({ ...data, _id: res.upsertedId }))
+      this.eventBus.publish(new IssueOpenedEvent({ ...data, _id: res.upsertedId }, query))
     }
     return res
   }
