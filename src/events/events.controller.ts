@@ -2,9 +2,12 @@ import { Body, Controller, Headers, Post, UseGuards } from '@nestjs/common'
 import { CommandBus } from '@nestjs/cqrs'
 import { ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger'
 import { WebhookGuard } from 'src/core/guards/webhook.guard'
-import { IssuesCommand } from 'src/events/commands/issues.command'
+import { EditIssueCommand } from 'src/events/commands/edit-issue.command'
 import { NullCommand } from 'src/events/commands/null.command'
+import { OpenIssueCommand } from 'src/events/commands/open-issue.command'
 import { PingCommand } from 'src/events/commands/ping.command'
+import { IssueWrapper } from 'src/events/interfaces/issues.interface'
+import { Ping } from 'src/events/interfaces/ping.interface'
 
 class Response {}
 
@@ -15,12 +18,24 @@ class Response {}
 export class EventsController {
   constructor(private readonly commandBus: CommandBus) {}
 
-  getCommand(body: any, event: string) {
+  getIssuesCommand(body: IssueWrapper) {
+    switch (body.action) {
+      case 'opened':
+        return new OpenIssueCommand(body.issue)
+      case 'edited':
+        return new EditIssueCommand(body.issue)
+      default:
+        console.log(body)
+        return new NullCommand()
+    }
+  }
+
+  getCommand(body: unknown, event: string) {
     switch (event) {
       case 'issues':
-        return new IssuesCommand(body)
+        return this.getIssuesCommand(body as IssueWrapper)
       case 'ping':
-        return new PingCommand(body)
+        return new PingCommand(body as Ping)
       default:
         return new NullCommand()
     }
@@ -29,7 +44,7 @@ export class EventsController {
   @ApiOperation({ summary: 'Handle event' })
   @ApiOkResponse({ type: Response })
   @Post()
-  createOrder(@Body() body, @Headers('x-github-event') event) {
+  post(@Body() body, @Headers('x-github-event') event) {
     const command = this.getCommand(body, event)
     return this.commandBus.execute(command)
   }

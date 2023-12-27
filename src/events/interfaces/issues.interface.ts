@@ -23,6 +23,11 @@ export interface IssueWrapper {
   sender: SimpleUser
 }
 
+interface Sync {
+  id: string
+  is_synced: boolean
+}
+
 /**
  * Issues are a great way to keep track of tasks, enhancements, and bugs for your projects.
  */
@@ -101,7 +106,7 @@ export interface Issue {
   performed_via_github_app?: null | GitHubApp
   author_association: AuthorAssociation
   reactions?: ReactionRollup
-  [k: string]: unknown
+  clockify?: Sync
 }
 /**
  * A GitHub user.
