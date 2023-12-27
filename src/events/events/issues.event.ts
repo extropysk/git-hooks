@@ -7,5 +7,6 @@ class IssueEvent {
 
 export class IssueOpenedEvent extends IssueEvent {}
 export class IssueReopenedEvent extends IssueEvent {}
+export class IssueDeletedEvent extends IssueEvent {}
 export class IssueEditedEvent extends IssueEvent {}
 export class IssueClosedEvent extends IssueEvent {}

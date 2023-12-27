@@ -4,11 +4,14 @@ import { Observable } from 'rxjs'
 import { map } from 'rxjs/operators'
 import {
   CreateClockifyTaskCommand,
+  DeleteClockifyTaskCommand,
   UpdateClockifyTaskCommand,
 } from 'src/clockify/commands/tasks.command'
 import { WithId } from 'src/db/interfaces/base.interface'
+import { NullCommand } from 'src/events/commands/null.command'
 import {
   IssueClosedEvent,
+  IssueDeletedEvent,
   IssueEditedEvent,
   IssueOpenedEvent,
   IssueReopenedEvent,
@@ -55,6 +58,18 @@ export class IssuesSaga {
     return events$.pipe(
       ofType(IssueReopenedEvent),
       map(({ data }) => this.getUpdateOrCreateClockifyTaskCommand(data))
+    )
+  }
+
+  @Saga()
+  issueDeleted = (events$: Observable<any>): Observable<ICommand> => {
+    return events$.pipe(
+      ofType(IssueDeletedEvent),
+      map(({ data }) =>
+        data.clockify?.id
+          ? new DeleteClockifyTaskCommand(WORKSPACE_ID, PROJECT_ID, data)
+          : new NullCommand()
+      )
     )
   }
 }

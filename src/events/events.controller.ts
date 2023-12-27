@@ -4,6 +4,7 @@ import { ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from '@
 import { WebhookGuard } from 'src/core/guards/webhook.guard'
 import {
   CloseIssueCommand,
+  DeleteIssueCommand,
   EditIssueCommand,
   OpenIssueCommand,
   ReopenIssueCommand,
@@ -32,6 +33,8 @@ export class EventsController {
         return new CloseIssueCommand(body.issue)
       case 'reopened':
         return new ReopenIssueCommand(body.issue)
+      case 'deleted':
+        return new DeleteIssueCommand(body.issue)
       default:
         console.log(body)
         return new NullCommand()

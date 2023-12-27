@@ -1,4 +1,5 @@
 import { CloseIssueHandler } from 'src/events/handlers/issues/close-issue.handler'
+import { DeleteIssueHandler } from 'src/events/handlers/issues/delete-issue.handler'
 import { EditIssueHandler } from 'src/events/handlers/issues/edit-issue.handler'
 import { OpenIssueHandler } from 'src/events/handlers/issues/open-issue.handler'
 import { ReopenIssueHandler } from 'src/events/handlers/issues/reopen-issue.handler'
@@ -12,4 +13,5 @@ export const CommandHandlers = [
   EditIssueHandler,
   CloseIssueHandler,
   ReopenIssueHandler,
+  DeleteIssueHandler,
 ]
