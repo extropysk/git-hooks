@@ -7,5 +7,5 @@ export interface Base {
 export type WithoutId<T extends Base> = Omit<T, '_id'>
 
 export type Projection<T extends Base> = {
-  [key in keyof T]?
+  [key in keyof T]?: number
 }

@@ -1,5 +1,5 @@
 import { Issue } from 'src/events/interfaces/issues.interface'
 
-export class IssueUpdatedEvent {
+export class OpenIssueCommand {
   constructor(public readonly data: Issue) {}
 }
