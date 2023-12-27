@@ -25,7 +25,7 @@ export interface IssueWrapper {
 
 interface Sync {
   id: string
-  updated_at: Date
+  is_synced: boolean
 }
 
 /**

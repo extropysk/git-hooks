@@ -26,7 +26,7 @@ export class OpenIssueHandler implements ICommandHandler<OpenIssueCommand> {
     )
 
     if (res.upsertedCount) {
-      this.eventBus.publish(new IssueOpenedEvent(data))
+      this.eventBus.publish(new IssueOpenedEvent({ ...data, _id: res.upsertedId }))
     }
     return res
   }

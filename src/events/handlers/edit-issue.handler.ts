@@ -15,8 +15,17 @@ export class EditIssueHandler implements ICommandHandler<EditIssueCommand> {
   ) {}
 
   async execute({ data }: EditIssueCommand) {
-    const res = await this.db.collection<Issue>('issues').updateOne({ id: data.id }, { $set: data })
-    this.eventBus.publish(new IssueEditedEvent(data))
+    const res = await this.db.collection<Issue>('issues').findOneAndUpdate(
+      { id: data.id },
+      {
+        $set: {
+          title: data.title,
+          body: data.body,
+          'clockify.is_synced': false,
+        },
+      }
+    )
+    this.eventBus.publish(new IssueEditedEvent(res))
     return res
   }
 }
