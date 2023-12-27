@@ -4,14 +4,14 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { AxiosError } from 'axios'
 import { Db } from 'mongodb'
 import { catchError, firstValueFrom } from 'rxjs'
-import { CreateClockifyTaskCommand } from 'src/clockify/commands/create-task.command'
+import { UpdateClockifyTaskCommand } from 'src/clockify/commands/tasks.command'
 import { ClockifyTask } from 'src/clockify/interfaces/task.interface'
 import { DATABASE } from 'src/db/database.module'
 import { Issue } from 'src/events/interfaces/issues.interface'
 
-@CommandHandler(CreateClockifyTaskCommand)
-export class CreateClockifyTaskHandler implements ICommandHandler<CreateClockifyTaskCommand> {
-  private readonly logger = new Logger(CreateClockifyTaskHandler.name)
+@CommandHandler(UpdateClockifyTaskCommand)
+export class UpdateClockifyTaskHandler implements ICommandHandler<UpdateClockifyTaskCommand> {
+  private readonly logger = new Logger(UpdateClockifyTaskHandler.name)
 
   constructor(
     private readonly httpService: HttpService,
@@ -19,12 +19,13 @@ export class CreateClockifyTaskHandler implements ICommandHandler<CreateClockify
     private db: Db
   ) {}
 
-  async execute({ workspaceId, projectId, issue, task }: CreateClockifyTaskCommand) {
-    const {
-      data: { id },
-    } = await firstValueFrom(
+  async execute({ workspaceId, projectId, issue, task }: UpdateClockifyTaskCommand) {
+    await firstValueFrom(
       this.httpService
-        .post<ClockifyTask>(`/v1/workspaces/${workspaceId}/projects/${projectId}/tasks`, task)
+        .put<ClockifyTask>(
+          `/v1/workspaces/${workspaceId}/projects/${projectId}/tasks/${issue.clockify?.id}`,
+          task
+        )
         .pipe(
           catchError((error: AxiosError) => {
             this.logger.error(error.response.data)
@@ -35,6 +36,6 @@ export class CreateClockifyTaskHandler implements ICommandHandler<CreateClockify
 
     return await this.db
       .collection<Issue>('issues')
-      .updateOne({ _id: issue._id }, { $set: { clockify: { id, is_synced: true } } })
+      .updateOne({ _id: issue._id }, { $set: { 'clockify.synced': true } })
   }
 }

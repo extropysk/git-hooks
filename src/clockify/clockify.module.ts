@@ -1,8 +1,7 @@
 import { HttpModule } from '@nestjs/axios'
 import { Module } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import { CreateClockifyTaskHandler } from 'src/clockify/handlers/create-task.handler'
-import { UpdateClockifyTaskHandler } from 'src/clockify/handlers/update-task.handler'
+import { ClockifyCommandHandlers } from 'src/clockify/handlers'
 import { DatabaseModule } from 'src/db/database.module'
 
 @Module({
@@ -16,6 +15,6 @@ import { DatabaseModule } from 'src/db/database.module'
     }),
     DatabaseModule,
   ],
-  providers: [CreateClockifyTaskHandler, UpdateClockifyTaskHandler],
+  providers: ClockifyCommandHandlers,
 })
 export class ClockifyModule {}
